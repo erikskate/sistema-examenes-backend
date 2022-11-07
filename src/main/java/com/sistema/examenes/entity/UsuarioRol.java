@@ -26,6 +26,9 @@ public class UsuarioRol {
         this.usuarioRolId = usuarioRolId;
     }
 
+    public UsuarioRol() {
+    }
+
     public Long getUsuarioRolId() {
         return usuarioRolId;
     }

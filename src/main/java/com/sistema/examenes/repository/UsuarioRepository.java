@@ -6,5 +6,5 @@ import com.sistema.examenes.entity.Usuario;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 
-	public Usuario findByUserName(String userName);
+	public Usuario findByUsername(String username);
 }
