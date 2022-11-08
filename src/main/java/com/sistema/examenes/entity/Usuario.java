@@ -21,24 +21,38 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name="usuarios")
 public class Usuario implements UserDetails{
-    
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String username;
     private String password;
     private String nombre;
     private String apellido;
     private String email;
     private String telefono;
-    private boolean enable = true;
+    private boolean enabled = true;
     private String perfil;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "usuario")
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER,mappedBy = "usuario")
     @JsonIgnore
     private Set<UsuarioRol> usuarioRoles = new HashSet<>();
 
-    public Usuario() {
+    public Usuario(){
+
+    }
+
+    public Usuario(Long id, String username, String password, String nombre, String apellido, String email, String telefono, boolean enabled, String perfil) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.telefono = telefono;
+        this.enabled = enabled;
+        this.perfil = perfil;
     }
 
     public Long getId() {
@@ -53,8 +67,32 @@ public class Usuario implements UserDetails{
         return username;
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<Authority> autoridades = new HashSet<>();
+        this.usuarioRoles.forEach(usuarioRol -> {
+            autoridades.add(new Authority(usuarioRol.getRol().getRolNombre()));
+        });
+        return autoridades;
     }
 
     public String getPassword() {
@@ -97,12 +135,12 @@ public class Usuario implements UserDetails{
         this.telefono = telefono;
     }
 
-    public boolean isEnable() {
-        return enable;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getPerfil() {
@@ -120,36 +158,5 @@ public class Usuario implements UserDetails{
     public void setUsuarioRoles(Set<UsuarioRol> usuarioRoles) {
         this.usuarioRoles = usuarioRoles;
     }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-       Set<Authority> autoridades = new HashSet<>();
-       this.usuarioRoles.forEach(usuarioRol -> {
-           autoridades.add(new Authority(usuarioRol.getRol().getNombre()));
-       });
-       return autoridades;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-    
 
 }
